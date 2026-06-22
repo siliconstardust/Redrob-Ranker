@@ -96,3 +96,6 @@ output/           # submission.csv written here
 
 `candidates.jsonl.gz` is not committed to this repo (52MB+, and provided by
 the organizers) — drop it into `data/` before running.
+
+## App live at: 
+            https://redrob-ranker-kxwycamofmnppg8qcl24v8.streamlit.app/
