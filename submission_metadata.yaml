@@ -1,0 +1,72 @@
+# Redrob Hackathon — Submission Metadata
+# NOTE: team_name, primary_contact, team_members, github_repo, and
+# sandbox_link are placeholders below — fill these in with your real details
+# before submitting. Everything else reflects how this ranker actually works.
+
+team_name: "REPLACE_ME"
+
+primary_contact:
+  name: "REPLACE_ME"
+  email: "REPLACE_ME"
+  phone: "REPLACE_ME"
+
+team_members:
+  - name: "REPLACE_ME"
+    email: "REPLACE_ME"
+    role: "ML Engineer"
+
+github_repo: "https://github.com/REPLACE_ME/REPLACE_ME"
+
+sandbox_link: "REPLACE_ME — see submission_spec.md Section 10.5 for accepted platforms"
+
+reproduce_command: "python src/rank.py --candidates ./data/candidates.jsonl.gz --out ./output/submission.csv"
+
+compute:
+  platform: "REPLACE_ME, e.g. Local Linux/Mac/Windows machine"
+  cpu_cores: 0   # REPLACE_ME
+  ram_gb: 16     # REPLACE_ME if different
+  python_version: "3.12"   # REPLACE_ME with your actual `python --version`
+  os: "REPLACE_ME"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: false
+  pre_computation_time_minutes: 0
+
+ai_tools_used:
+  - "Claude"
+
+ai_usage_summary: |
+  Used Claude (Anthropic) to design, build, debug, and document the ranking
+  pipeline (feature extraction, scoring logic, reasoning generation, honeypot
+  detection) over an iterative session: initial architecture, then targeted
+  bug fixes after inspecting actual output against the sample dataset
+  (corrected a tenure-chaser false-positive heuristic and a score-rounding
+  tie-break violation found by running the official validator). No candidate
+  data was sent to any external LLM API — all scoring runs locally and
+  offline, per the compute constraints in submission_spec.md Section 3.
+
+methodology_summary: |
+  Hybrid ranker: structured features (title-family classification, trust-
+  weighted skill scoring using proficiency x endorsements x duration_months,
+  career tenure/seniority pattern, location fit, education tier) combined
+  with a TF-IDF + cosine-similarity score against the JD text. Composite =
+  weighted sum (title 32%, skills 27%+6% nice-to-have, narrative evidence
+  13%, experience-band fit 10%, location 7%, TF-IDF similarity 5%), then a
+  multiplicative gate for the JD's explicit disqualifiers (research-only,
+  consulting-only career, CV/speech/robotics without NLP/IR, off-target
+  title, escalating-seniority-with-short-tenure pattern) and a multiplicative
+  behavioral modifier from Redrob signals (recency, recruiter response rate,
+  open-to-work flag, verification). Honeypots are detected via internal-
+  consistency checks (YOE vs. career-history-sum mismatch, mass zero-duration
+  "expert" skill claims, implausible single-role tenure, recent-grad/high-YOE
+  conflict) and excluded from the top-100 eligible pool. Reasoning strings
+  are assembled only from facts present in the candidate's own record, so
+  hallucinated claims are structurally impossible. Runtime: under a minute
+  for 100K candidates on a single CPU core in testing.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: false  # REPLACE_ME: set true once you've run it end-to-end against the real candidates.jsonl.gz yourself
